@@ -1,4 +1,4 @@
-function result = forward_kinematics(thetasR)
+function result = my_forward_kinematics(thetasR)
     global shoulderOffsetY
     global elbowOffsetY
     global upperArmLength
@@ -15,11 +15,13 @@ function result = forward_kinematics(thetasR)
     HandOffsetX = 57.75;
     HandOffsetZ = 12.31;
 
-    result = fRightHand(thetasR);
+    result = my_fRightHand(thetasR);
     result(1:3) = result(1:3)/1000;
 end
 
-function [right] = fRightHand(thetas)
+
+%% My right hand
+function [right] = my_fRightHand(thetas)
     global shoulderOffsetY
     global LowerArmLength
     global elbowOffsetY
@@ -32,21 +34,20 @@ function [right] = fRightHand(thetas)
     base(2,4) = -shoulderOffsetY;
     base(3,4) = shoulderOffsetZ;
 
-    T1 = T(0,-pi/2,0,thetas(1));
-    T2 = T(0,pi/2,0,thetas(2)+pi/2); 
-    T3 = T(-elbowOffsetY,pi/2,upperArmLength,thetas(3));  %Add elbowOffsetY
+    T1 = T(0,pi/2,0,thetas(1));
+    T2 = T(0,-pi/2,0,thetas(2)+pi/2); %To -pi/2 to afinoume panta !!!
+    T3 = T(-elbowOffsetY,pi/2,upperArmLength,thetas(3));
     T4 = T(0,-pi/2,0,thetas(4));
     T5 = T(0,pi/2,LowerArmLength,thetas(5));
 
-    R = Rofl(-pi/2,0,-pi/2);  %modify here
+    R = Rofl(pi/2, 0,pi/2);
     Tend1 = eye(4,4);
     Tend1(1,4) = HandOffsetX;
     Tend1(3,4) = -HandOffsetZ;
     Tend = R*Tend1;
-    Tendend = base*T1*T2*T3*T4*T5*Tend; %Delete last Rofl(0,0,pi)
+    Tendend = base*T1*T2*T3*T4*T5*Tend*Rofl(0,0,pi);
 
-    %Remove Temp here
-    
+
     rotZ = atan2(Tendend(2,1),Tendend(1,1));
     rotY = atan2(-Tendend(3,1),sqrt(Tendend(3,2)^2 + Tendend(3,3)^2));
     rotX = atan2(Tendend(3,2),Tendend(3,3));
@@ -60,7 +61,7 @@ function [Taf] = T(a,alpha,d,theta)
     0,                     0,                      0,              1;];
 end
 
-function [Ro] = Rofl(xAngle,yAngle,zAngle)
+function [Ro] = Rofl2(xAngle,yAngle,zAngle)
         Rx = [1,                0,          0;
         0,                cos(xAngle), -sin(xAngle);
         0,                sin(xAngle), cos(xAngle);];
@@ -79,7 +80,7 @@ function [Ro] = Rofl(xAngle,yAngle,zAngle)
         Ro = R;
 end
 
-function [Ro] = Rofl2(xAngle,yAngle,zAngle)
+function [Ro] = Rofl(xAngle,yAngle,zAngle)
     Rx = [1,                0,          0;
         0,                cos(xAngle), -sin(xAngle);
         0,                sin(xAngle), cos(xAngle);];

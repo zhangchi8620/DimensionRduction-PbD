@@ -55,8 +55,8 @@ function calModel()
     Data = [timeDim; dim];
     Data2 = [timeDim; dim2];
     %fprintf('size of Data %d\t\t Data2 %d\n',size(Data), size(Data2));
-    %[Priors, Mu, Sigma] = GMMwithReproject(Data, Data2, nbStates, A);
-    [Priors, Mu, Sigma] = GMM(Data, nbStates);
+    [Priors, Mu, Sigma] = GMMwithReproject(Data, Data2, nbStates, A);
+    %[Priors, Mu, Sigma] = GMM(Data, nbStates);
     
     %% Step 8: save params
     save([path, 'Priors.mat'], 'Priors');
