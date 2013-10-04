@@ -29,6 +29,6 @@ if __name__ == "__main__":
   #test_moveJoints(robot)
   #test_closeHand(robot)
   #test_handpos(robot)
-  test_ForwardKinect(robot)
+  test_forward_kinematics(robot)
   #test_robotInfo(robot)
   robot.exit()

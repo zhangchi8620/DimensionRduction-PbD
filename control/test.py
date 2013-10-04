@@ -86,42 +86,23 @@ def test_getAngles(robot):
     sensorAngles = robot.motion.getAngles(names, useSensor)
     print names, ":  ", sensorAngles
    
-def test_ForwardKinect(robot):
-  #robot.fixLegs()
+def test_forward_kinematics(robot):
+  robot.fixLegs()
   while not robot.headTouch():
     joint = robot.JointData()
-    #print "joint: ", joint
     handRead = robot.HandData()
     print "handRead: ", handRead
-    #output = mlab.testForwardKinect([joint])
-    output = mlab.ForwardKinematics([joint])
-    handComp = []
+    output = mlab.forward_kinematics([joint])
+    handSim = []
     for index, item in enumerate(output):
-      handComp.append(float(item))
-    print "handComp: ", handComp
+      handSim.append(float(item))
+    print "handSim: ", handSim
   
-    diff = [a-b for a, b in zip(handRead,  handComp)]
-    percent_diff = [(a-b)/a for a, b in zip(handRead,  handComp)]
-
-    print "percent_diff: ", percent_diff, "------\n"
+    diff = [a-b for a, b in zip(handRead,  handSim)]
     print "diff: ", diff, "\n\n"
-    sleep(2)
+    sleep(1)
 
 def test_robotInfo(robot):
     robotConfig = robot.motion.getRobotConfig()
     for i in range(len(robotConfig[0])):
         print robotConfig[0][i], ": ", robotConfig[1][i]
-    # "Model Type"   : "naoH25", "naoH21", "naoT14" or "naoT2".
-    # "Head Version" : "VERSION_32" or "VERSION_33" or "VERSION_40".
-    # "Body Version" : "VERSION_32" or "VERSION_33" or "VERSION_40".
-    # "Laser"        : True or False.
-    # "Legs"         : True or False.
-    # "Arms"         : True or False.
-    # "Extended Arms": True or False.
-    # "Hands"        : True or False.
-    # "Arm Version"  : "VERSION_32" or "VERSION_33" or "VERSION_40".
-    # Number of Legs : 0 or 2
-    # Number of Arms : 0 or 2
-    # Number of Hands: 0 or 2
-
-    
