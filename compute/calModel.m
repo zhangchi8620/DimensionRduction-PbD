@@ -20,7 +20,7 @@ function calModel()
     fprintf('size of all data: [%d, %d]\n',nbVar, nbData);
     hand = tmp_all(1:6, :);
     joint = tmp_all(7:end, :);
-    dim = joint;
+    dim = hand;
     
     %% Step 3: compute number of PCA for dim
     % normalize
@@ -56,13 +56,17 @@ function calModel()
     Data2 = [timeDim; dim2];
     %fprintf('size of Data %d\t\t Data2 %d\n',size(Data), size(Data2));
     [Priors, Mu, Sigma] = GMMwithReproject(Data, Data2, nbStates, A);
-    %[Priors, Mu, Sigma] = GMM(Data, nbStates);
     
-    %% Step 8: save params
+    %% Step 8: Regress
+    for time = 1 : length
+        regressed(time,:) = GMR(time, 1, [2:7]);
+    end
+    %% Step 9: save params
     save([path, 'Priors.mat'], 'Priors');
     save([path, 'Mu.mat'], 'Mu');
     save([path, 'Sigma.mat'], 'Sigma');
-
+    save([path, 'regressed.mat'], 'regressed');
+    
     pause;
     close all;
 
