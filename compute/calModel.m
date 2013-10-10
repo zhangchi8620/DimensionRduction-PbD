@@ -18,7 +18,7 @@ function calModel()
     tmp_all = raw_all';
     [nbVar, nbData] = size(tmp_all);
     fprintf('size of all data: [%d, %d]\n',nbVar, nbData);
-    hand = tmp_all(1:3, :);
+    hand = tmp_all(1:6, :);
     joint = tmp_all(7:end, :);
     dim = joint;
     
@@ -45,7 +45,7 @@ function calModel()
     unprinDim
     
     %% Step 6: compute # of GMM by BIC
-    maxStates =  3;
+    maxStates =  6;
     nbStates = BIC(dim2, maxStates);
     fprintf('nbStates %d\n', nbStates);
 
@@ -65,14 +65,14 @@ function calModel()
     %% Step 8: regress
     for time = 1 : length
         tmp = GMR(time, 1, [2:7]);
-        %tmp2 = tmp;
         tmp2 = tmp .* s' + m'; 
+        %hand_regress(time, :) = tmp2;
         hand_regress(time, :)  = forward_kinematics(tmp2);
     end
     hand_regress = hand_regress';
     % regressed traj
     figure;
-    plot3(hand_regress(1,:), hand_regress(2,:), hand_regress(3,:),'r');hold on;
+    plot3(hand_regress(1,:), hand_regress(2,:), hand_regress(3,:),'r', 'LineWidth', 5);hold on;
     grid on;
     % plot recorded traj     
     plot_recorded_data();
