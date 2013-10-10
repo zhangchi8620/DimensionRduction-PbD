@@ -18,16 +18,16 @@ function calModel()
     tmp_all = raw_all';
     [nbVar, nbData] = size(tmp_all);
     fprintf('size of all data: [%d, %d]\n',nbVar, nbData);
-    hand = tmp_all(1:6, :);
+    hand = tmp_all(1:3, :);
     joint = tmp_all(7:end, :);
-    dim = hand;
+    dim = joint;
     
     %% Step 3: compute number of PCA for dim
     % normalize
     tmp = dim';
     m = mean(tmp);
     s = std(tmp);
-    dim = (dim - repmat(m', 1, 800)) ./ repmat(s', 1, 800); 
+    dim = (dim - repmat(m', 1, length*numDemo)) ./ repmat(s', 1, length*numDemo); 
     
     threshold = 0.95;
     [nbPC, percent] = numPCA(dim, threshold);
@@ -45,7 +45,7 @@ function calModel()
     unprinDim
     
     %% Step 6: compute # of GMM by BIC
-    maxStates =  6;
+    maxStates =  3;
     nbStates = BIC(dim2, maxStates);
     fprintf('nbStates %d\n', nbStates);
 
@@ -56,17 +56,28 @@ function calModel()
     Data2 = [timeDim; dim2];
     %fprintf('size of Data %d\t\t Data2 %d\n',size(Data), size(Data2));
     [Priors, Mu, Sigma] = GMMwithReproject(Data, Data2, nbStates, A);
-    
-    %% Step 8: Regress
-    for time = 1 : length
-        regressed(time,:) = GMR(time, 1, [2:7]);
-    end
-    %% Step 9: save params
+
+    %% Step 8: save params
     save([path, 'Priors.mat'], 'Priors');
     save([path, 'Mu.mat'], 'Mu');
     save([path, 'Sigma.mat'], 'Sigma');
-    save([path, 'regressed.mat'], 'regressed');
     
+    %% Step 8: regress
+    for time = 1 : length
+        tmp = GMR(time, 1, [2:7]);
+        %tmp2 = tmp;
+        tmp2 = tmp .* s' + m'; 
+        hand_regress(time, :)  = forward_kinematics(tmp2);
+    end
+    hand_regress = hand_regress';
+    % regressed traj
+    figure;
+    plot3(hand_regress(1,:), hand_regress(2,:), hand_regress(3,:),'r');hold on;
+    grid on;
+    % plot recorded traj     
+    plot_recorded_data();
+    
+
     pause;
     close all;
 

@@ -12,7 +12,7 @@ for time = 1 : length
     %hand_regress(time, :) = hand;
     %hand_regress(time, :) = forward_kinematics(joint);
 end
-  
+
 %% recorded hand trajectory - 3D
 figure;
 plot3(hand_record(1,1:200), hand_record(2,1:200), hand_record(3,1:200),'b');hold on;
